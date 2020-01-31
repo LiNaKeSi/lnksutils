@@ -28,6 +28,20 @@ func OpenURL(url string, args ...string) (io.ReadCloser, error) {
 	return resp.Body, nil
 }
 
+func SaveToFile(r io.Reader, dst string) error {
+	err := EnsureBaseDir(dst)
+	if err != nil {
+		return err
+	}
+	f, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+	_, err = io.Copy(f, r)
+	return err
+}
+
 // FetchFile from url.
 // Support http protocol and local file
 func FetchFile(url string, handle func(r io.Reader) error) error {
@@ -50,6 +64,13 @@ func FetchFile(url string, handle func(r io.Reader) error) error {
 	panic("not reached")
 }
 
+func FetchFileTo(url string, to string) error {
+	if url == to {
+		return nil
+	}
+	return FetchFile(url, func(r io.Reader) error { return SaveToFile(r, to) })
+}
+
 // EnsureBaseDir make sure the parent directory of fpath exists
 func EnsureBaseDir(fpath string) error {
 	baseDir := path.Dir(fpath)
@@ -58,4 +79,23 @@ func EnsureBaseDir(fpath string) error {
 		return nil
 	}
 	return os.MkdirAll(baseDir, 0755)
+}
+
+func IsExist(p string) bool {
+	_, err := os.Stat(p)
+	return err == nil
+}
+func IsFileExist(p string) bool {
+	info, err := os.Stat(p)
+	if err != nil {
+		return false
+	}
+	return !info.IsDir()
+}
+func IsDirExist(p string) bool {
+	info, err := os.Stat(p)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
 }
