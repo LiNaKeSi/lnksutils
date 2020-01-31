@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -32,7 +33,7 @@ func RunCommand(prog string, args ...string) (string, error) {
 	cmd.Stdout = buf
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		return "", err
+		return "", fmt.Errorf("%q with %v", buf.String(), err)
 	}
 	return strings.TrimSpace(buf.String()), nil
 }
