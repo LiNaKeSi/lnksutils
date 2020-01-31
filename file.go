@@ -28,6 +28,9 @@ func OpenURL(url string, args ...string) (io.ReadCloser, error) {
 	return resp.Body, nil
 }
 
+//SaveToFile save `r` to `dst`, it will automatically create base directory.
+//You can save string or bytes by
+// bytes.NewBuffer([]byte) or bytes.NewBufferString(string)
 func SaveToFile(r io.Reader, dst string) error {
 	err := EnsureBaseDir(dst)
 	if err != nil {
