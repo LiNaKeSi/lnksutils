@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path"
@@ -65,6 +66,22 @@ func FetchFile(url string, handle func(r io.Reader) error) error {
 		handle(f)
 	}
 	panic("not reached")
+}
+
+func FetchFileTmp(url string, handle func(tmpPath string) error) error {
+	tmpFile, err := ioutil.TempFile("/tmp", "nano.app")
+	if err != nil {
+		return err
+	}
+	err = FetchFile(url, func(r io.Reader) error {
+		_, err := io.Copy(tmpFile, r)
+		return err
+	})
+	if err != nil {
+		return err
+	}
+	defer tmpFile.Close()
+	return handle(tmpFile.Name())
 }
 
 func FetchFileTo(url string, to string) error {
