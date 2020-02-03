@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"os/user"
+	"strings"
 )
 
 func IsRootPower() bool {
@@ -21,7 +23,6 @@ func LiftPrivilege(exit bool) error {
 	if IsRootPower() {
 		return nil
 	}
-
 	password, err := RunCommand("zenity",
 		"--password",
 		"--title", "权限",
@@ -34,7 +35,10 @@ func LiftPrivilege(exit bool) error {
 		return err
 	}
 	// TODO 避免 PS 看到密码
-	err = exec.Command("sh", "-c", "echo "+password+" | sudo -S "+selfPath+"").Start()
+	cmd := exec.Command("sh", "-c",
+		fmt.Sprintf("echo %s | sudo -S %s %s",
+			password, selfPath, strings.Join(os.Args[1:], " ")))
+	cmd.Start()
 	if err != nil {
 		return err
 	}

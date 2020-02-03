@@ -63,7 +63,7 @@ func FetchFile(url string, handle func(r io.Reader) error) error {
 			return err
 		}
 		defer f.Close()
-		handle(f)
+		return handle(f)
 	}
 	panic("not reached")
 }
