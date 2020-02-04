@@ -19,7 +19,7 @@ func IsRootPower() bool {
 // LiftPrivilege sudo itself.
 //
 // Note, this function need zenity and sudo program in system.
-func LiftPrivilege(exit bool) error {
+func LiftPrivilege() error {
 	if IsRootPower() {
 		return nil
 	}
@@ -38,12 +38,7 @@ func LiftPrivilege(exit bool) error {
 	cmd := exec.Command("sh", "-c",
 		fmt.Sprintf("echo %s | sudo -S %s %s",
 			password, selfPath, strings.Join(os.Args[1:], " ")))
-	cmd.Start()
-	if err != nil {
-		return err
-	}
-	if exit {
-		os.Exit(0)
-	}
+	cmd.Run()
+	os.Exit(0)
 	return nil
 }
