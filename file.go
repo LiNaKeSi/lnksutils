@@ -69,7 +69,7 @@ func FetchFile(url string, handle func(r io.Reader) error) error {
 }
 
 func FetchFileTmp(url string, handle func(tmpPath string) error) error {
-	tmpFile, err := ioutil.TempFile("/tmp", "nano.app")
+	tmpFile, err := ioutil.TempFile("/tmp", "lnks.tmp.*")
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,10 @@ func FetchFileTmp(url string, handle func(tmpPath string) error) error {
 	if err != nil {
 		return err
 	}
-	defer tmpFile.Close()
+	defer func() {
+		tmpFile.Close()
+		os.Remove(tmpFile.Name())
+	}()
 	return handle(tmpFile.Name())
 }
 
