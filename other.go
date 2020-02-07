@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"os"
 	"os/exec"
 	"strings"
@@ -52,4 +53,22 @@ func RunUrl(url string, args ...string) (string, error) {
 		return "", err
 	}
 	return string(bs), nil
+}
+
+// GetFreePort find a free TCP listen port on the ip
+func GetFreePort(ip string) (int, error) {
+	if ip == "" {
+		ip = "localhost"
+	}
+	addr, err := net.ResolveTCPAddr("tcp", ip+":0")
+	if err != nil {
+		return 0, err
+	}
+
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port, nil
 }
