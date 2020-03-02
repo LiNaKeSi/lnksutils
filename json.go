@@ -1,4 +1,4 @@
-package utils
+package lnksutils
 
 import (
 	"encoding/json"
