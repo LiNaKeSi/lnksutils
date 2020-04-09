@@ -65,26 +65,16 @@ func FetchFile(url string, handle func(r io.Reader) error) error {
 		defer f.Close()
 		return handle(f)
 	}
-	panic("not reached")
 }
 
 func FetchFileTmp(url string, handle func(tmpPath string) error) error {
-	tmpFile, err := ioutil.TempFile("/tmp", "lnks.tmp.*")
-	if err != nil {
-		return err
-	}
-	err = FetchFile(url, func(r io.Reader) error {
-		_, err := io.Copy(tmpFile, r)
-		return err
+	return DoWithTmpFile(func(tmpFile string) error {
+		err := FetchFileTo(url, tmpFile)
+		if err != nil {
+			return err
+		}
+		return handle(tmpFile)
 	})
-	if err != nil {
-		return err
-	}
-	defer func() {
-		tmpFile.Close()
-		os.Remove(tmpFile.Name())
-	}()
-	return handle(tmpFile.Name())
 }
 
 func FetchFileTo(url string, to string) error {
@@ -121,4 +111,22 @@ func IsDirExist(p string) bool {
 		return false
 	}
 	return info.IsDir()
+}
+
+func DoWithTmpDir(fn func(string) error) error {
+	tmpDir, err := ioutil.TempDir("", "lnks-dir")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpDir)
+	return fn(tmpDir)
+}
+func DoWithTmpFile(fn func(string) error) error {
+	f, err := ioutil.TempFile("", "lnks-file")
+	if err != nil {
+		return err
+	}
+	f.Close()
+	defer os.Remove(f.Name())
+	return fn(f.Name())
 }
