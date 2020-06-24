@@ -8,24 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-	"syscall"
 )
-
-// UnameMachine return the `uname -m"
-func UnameMachine() string {
-	var uname syscall.Utsname
-	syscall.Uname(&uname)
-
-	arr := uname.Machine[:]
-	b := make([]byte, 0, len(arr))
-	for _, v := range arr {
-		if v == 0x00 {
-			break
-		}
-		b = append(b, byte(v))
-	}
-	return string(b)
-}
 
 // RunCommand run `prog` with `args` and return stdout and stderr combine
 func RunCommand(prog string, args ...string) (string, error) {
@@ -58,7 +41,7 @@ func RunUrl(url string, args ...string) (string, error) {
 // GetFreePort find a free TCP listen port on the ip
 func GetFreePort(ip string) (int, error) {
 	if ip == "" {
-		ip = "localhost"
+		ip = "127.0.0.1"
 	}
 	addr, err := net.ResolveTCPAddr("tcp", ip+":0")
 	if err != nil {
