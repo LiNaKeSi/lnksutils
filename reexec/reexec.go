@@ -21,12 +21,14 @@ func Register(name string, initializer func()) {
 
 // Init is called as the first part of the exec process and returns true if an
 // initialization function was called.
-func Init() bool {
-	initializer, exists := registeredInitializers[path.Base(os.Args[0])]
-	if exists {
-		initializer()
+func Init(names ...string) bool {
+	for _, name := range append(names, path.Base(os.Args[0])) {
+		initializer, exists := registeredInitializers[name]
+		if exists {
+			initializer()
 
-		return true
+			return true
+		}
 	}
 	return false
 }
