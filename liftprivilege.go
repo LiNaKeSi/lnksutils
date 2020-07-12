@@ -28,16 +28,26 @@ func LiftPrivilege() error {
 		"--title", "权限",
 		"--text", "需要特权执行安装过程")
 	if err != nil {
-		return err
+		fmt.Println("无法通过图形界面获取密码，尝试使用sudo执行", err)
 	}
+
 	selfPath, err := os.Readlink("/proc/self/exe")
 	if err != nil {
 		return err
 	}
-	// TODO 避免 PS 看到密码
-	cmd := exec.Command("sh", "-c",
-		fmt.Sprintf("echo %s | sudo -S %s %s",
-			password, selfPath, strings.Join(os.Args[1:], " ")))
+	var cmd *exec.Cmd
+	if password != "" {
+		// TODO 避免 PS 看到密码
+		cmd = exec.Command("sh", "-c",
+			fmt.Sprintf("echo %s | sudo -E -S %s %s",
+				password, selfPath, strings.Join(os.Args[1:], " ")))
+	} else {
+		cmd = exec.Command("sudo", "-E", selfPath)
+		cmd.Args = append(cmd.Args, os.Args[1:]...)
+	}
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
 	cmd.Run()
 	os.Exit(0)
 	return nil
