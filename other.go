@@ -2,7 +2,10 @@ package lnksutils
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
+	"hash"
+	"io"
 	"io/ioutil"
 	"net"
 	"os"
@@ -54,4 +57,22 @@ func GetFreePort(ip string) (int, error) {
 	}
 	defer l.Close()
 	return l.Addr().(*net.TCPAddr).Port, nil
+}
+
+func HashFile(filePath string, alg hash.Hash) (string, error) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	_, err = io.Copy(alg, f)
+	return hex.EncodeToString(alg.Sum(nil)), err
+}
+
+func HASHSelf(alg hash.Hash) (string, error) {
+	prog, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	return HashFile(prog, alg)
 }
