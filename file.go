@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -86,7 +86,7 @@ func FetchFileTo(url string, to string) error {
 
 // EnsureBaseDir make sure the parent directory of fpath exists
 func EnsureBaseDir(fpath string) error {
-	baseDir := path.Dir(fpath)
+	baseDir := filepath.Dir(fpath)
 	info, err := os.Stat(baseDir)
 	if err == nil && info.IsDir() {
 		return nil

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"strings"
 	"text/template"
 
@@ -114,7 +114,7 @@ func (conf SystemdConf) serviceFile() string {
 	if conf.IsSession {
 		output = os.ExpandEnv("$HOME/.config/systemd/user/")
 	}
-	return path.Join(output, conf.Name+".service")
+	return filepath.Join(output, conf.Name+".service")
 }
 
 func (conf SystemdConf) enableService() error {

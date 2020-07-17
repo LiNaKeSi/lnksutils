@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 )
 
@@ -22,7 +21,7 @@ func Register(name string, initializer func()) {
 // Init is called as the first part of the exec process and returns true if an
 // initialization function was called.
 func Init(names ...string) bool {
-	for _, name := range append([]string{path.Base(os.Args[0])}, names...) {
+	for _, name := range append([]string{filepath.Base(os.Args[0])}, names...) {
 		initializer, exists := registeredInitializers[name]
 		if exists {
 			initializer()

@@ -1,6 +1,6 @@
 package lnksutils
 
-import "path"
+import "path/filepath"
 
 // // AppDir support join user cache/config directory with
 // // appname and fields.
@@ -10,10 +10,10 @@ type AppDir struct {
 }
 
 func (a AppDir) ConfigPath(fields ...string) string {
-	return path.Join(append([]string{a.configDir}, fields...)...)
+	return filepath.Join(append([]string{a.configDir}, fields...)...)
 }
 func (a AppDir) CachePath(fields ...string) string {
-	return path.Join(append([]string{a.cacheDir}, fields...)...)
+	return filepath.Join(append([]string{a.cacheDir}, fields...)...)
 }
 
 func NewAppDir(appname string) (AppDir, error) {
@@ -26,7 +26,7 @@ func NewAppDir(appname string) (AppDir, error) {
 		return AppDir{}, err
 	}
 	return AppDir{
-		cacheDir:  path.Join(d, appname),
-		configDir: path.Join(c, appname),
+		cacheDir:  filepath.Join(d, appname),
+		configDir: filepath.Join(c, appname),
 	}, nil
 }
