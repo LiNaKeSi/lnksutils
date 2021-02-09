@@ -87,6 +87,10 @@ func FetchFileTo(url string, to string) error {
 // EnsureBaseDir make sure the parent directory of fpath exists
 func EnsureBaseDir(fpath string) error {
 	baseDir := filepath.Dir(fpath)
+	return EnsureDir(baseDir)
+}
+
+func EnsureDir(baseDir string) error {
 	info, err := os.Stat(baseDir)
 	if err == nil && info.IsDir() {
 		return nil
@@ -111,6 +115,15 @@ func IsDirExist(p string) bool {
 		return false
 	}
 	return info.IsDir()
+}
+
+// IsDirEmtpy return true if dir doesn't exist or hasn't any children file.
+func IsDirEmpty(dir string) bool {
+	entries, err := ioutil.ReadDir(dir)
+	if err != nil {
+		return true
+	}
+	return len(entries) == 0
 }
 
 func DoWithTmpDir(fn func(string) error) error {
