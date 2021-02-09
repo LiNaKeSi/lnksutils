@@ -9,6 +9,10 @@ import (
 )
 
 func CopyDirectory(src, dst string) error {
+	err := EnsureDir(dst)
+	if err != nil {
+		return err
+	}
 	entries, err := ioutil.ReadDir(src)
 	if err != nil {
 		return err
