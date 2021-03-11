@@ -86,13 +86,17 @@ func ParseSetup(ctx *gin.Context) PagingSetup {
 }
 
 func WithSlice(ctx *gin.Context, all interface{}, result interface{}) PagingResult {
-	setup := ParseSetup(ctx)
+	return WithSlice2(ParseSetup(ctx), all, result)
+}
+func WithSlice2(setup PagingSetup, all interface{}, result interface{}) PagingResult {
 	pn := paginator.New(paginator.NewSliceAdapter(all), setup.Limit)
 	return doQuery(pn, setup.Page, result)
 }
 
 func WithGorm(ctx *gin.Context, db *gorm.DB, result interface{}) PagingResult {
-	setup := ParseSetup(ctx)
+	return WithGorm2(ParseSetup(ctx), db, result)
+}
+func WithGorm2(setup PagingSetup, db *gorm.DB, result interface{}) PagingResult {
 	pn := paginator.New(paginator.NewGORMAdapter(db), setup.Limit)
 	return doQuery(pn, setup.Page, result)
 }
