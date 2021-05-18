@@ -10,6 +10,7 @@ func FileToJSON(p string, obj interface{}) error {
 	if err != nil {
 		return err
 	}
+	defer f.Close()
 	return json.NewDecoder(f).Decode(obj)
 }
 
