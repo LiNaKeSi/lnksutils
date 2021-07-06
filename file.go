@@ -32,12 +32,30 @@ func OpenURL(url string, args ...string) (io.ReadCloser, error) {
 //SaveToFile save `r` to `dst`, it will automatically create base directory.
 //You can save string or bytes by
 // bytes.NewBuffer([]byte) or bytes.NewBufferString(string)
-func SaveToFile(r io.Reader, dst string) error {
+func SaveToFile(r io.Reader, dst string, opts ...FileOption) error {
+	opt, err := initFileOpts(opts)
+	if err != nil {
+		return err
+	}
+	if opt.atomic {
+		tmp := dst + ".tmp"
+		err = _SaveToFile(r, tmp, opt.filemode)
+		if err != nil {
+			return err
+		}
+		return os.Rename(tmp, dst)
+	} else {
+		return _SaveToFile(r, dst, opt.filemode)
+	}
+}
+
+func _SaveToFile(r io.Reader, dst string, mod os.FileMode) error {
 	err := EnsureBaseDir(dst)
 	if err != nil {
 		return err
 	}
-	f, err := os.Create(dst)
+
+	f, err := os.OpenFile(dst, os.O_RDWR|os.O_CREATE|os.O_TRUNC, mod)
 	if err != nil {
 		return err
 	}
@@ -77,11 +95,11 @@ func FetchFileTmp(url string, handle func(tmpPath string) error) error {
 	})
 }
 
-func FetchFileTo(url string, to string) error {
+func FetchFileTo(url string, to string, opts ...FileOption) error {
 	if url == to {
 		return nil
 	}
-	return FetchFile(url, func(r io.Reader) error { return SaveToFile(r, to) })
+	return FetchFile(url, func(r io.Reader) error { return SaveToFile(r, to, opts...) })
 }
 
 // EnsureBaseDir make sure the parent directory of fpath exists
