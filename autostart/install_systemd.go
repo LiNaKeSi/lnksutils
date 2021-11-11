@@ -4,6 +4,7 @@ package autostart
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -103,10 +104,13 @@ func (conf SystemdConf) ctrl(args ...string) error {
 	if conf.IsSession {
 		cmd.Args = append(cmd.Args, "--user")
 	}
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	cmd.Args = append(cmd.Args, args...)
-	return cmd.Run()
+
+	bs, err := cmd.CombinedOutput()
+	if err != nil {
+		return errors.New(string(bs))
+	}
+	return nil
 }
 
 func (conf SystemdConf) serviceFile() string {
@@ -119,7 +123,9 @@ func (conf SystemdConf) serviceFile() string {
 
 func (conf SystemdConf) enableService() error {
 	conf.ctrl("daemon-reload")
-	conf.ctrl("enable", conf.Name)
-	conf.ctrl("restart", conf.Name)
-	return nil
+	return conf.ctrl("enable", conf.Name)
+}
+
+func (conf SystemdConf) Start() error {
+	return conf.ctrl("restart", conf.Name)
 }
