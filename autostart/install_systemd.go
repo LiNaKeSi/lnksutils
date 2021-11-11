@@ -20,7 +20,9 @@ type SystemdConf struct {
 	Description string
 	Exec        string
 	WantedBy    string
+	After       string
 	IsSession   bool
+	Restart     string
 }
 
 func (conf SystemdConf) InstallFrom(exec string) error {
@@ -44,9 +46,13 @@ func (conf SystemdConf) InstallFrom(exec string) error {
 func (conf SystemdConf) buildServiceConf() ([]byte, error) {
 	const tplSession = `[Unit]
 Description={{ .Description }}
-After=network.target
+After={{ .After }}
 [Service]
 ExecStart={{ .Exec }}
+
+{{ with .Restart }}
+Restart={{ . }}
+{{ end }}
 
 {{ with .WantedBy }}
 [Install]
@@ -55,12 +61,14 @@ WantedBy={{ . }}
 `
 	const tplSystem = `[Unit]
 Description={{ .Description }}
-After=network.target
+After={{ .After }}
 
 [Service]
 Type=simple
 ExecStart={{ .Exec }}
-Restart=always
+{{ with .Restart }}
+Restart={{ . }}
+{{ end }}
 RestartSec=5
 StartLimitInterval=3
 RestartPreventExitStatus=SIGKILL
@@ -73,6 +81,12 @@ WantedBy={{ . }}
 	tpl := tplSystem
 	if conf.IsSession {
 		tpl = tplSession
+	}
+	if conf.After == "" {
+		conf.After = "default.target"
+	}
+	if conf.WantedBy == "" {
+		conf.WantedBy = "default.target"
 	}
 	var buf = bytes.NewBuffer(nil)
 	err := template.Must(template.New("eval.systemd.conf").Parse(tpl)).
