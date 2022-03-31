@@ -4,8 +4,8 @@ import (
 	"reflect"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"github.com/linakesi/lnksutils/paging/internal/paginator"
+	"gorm.io/gorm"
 )
 
 type Pageable interface {
@@ -67,7 +67,7 @@ func WithPageable(ctx interface{}, setup PagingSetup, db *gorm.DB, pa Pageable) 
 		}
 	}
 	result := reflect.New(reflect.SliceOf(reflect.TypeOf(pa))).Interface()
-	if gorm.IsRecordNotFoundError(raw.Error) {
+	if raw.Error == gorm.ErrRecordNotFound {
 		return PagingResult{
 			Total: 0,
 			Data:  reflect.MakeSlice(reflect.SliceOf(reflect.TypeOf(pa)), 0, 0).Interface(),
