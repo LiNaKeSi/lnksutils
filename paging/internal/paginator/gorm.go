@@ -1,7 +1,7 @@
 package paginator
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 )
 
 // GORMAdapter gorm adapter to be passed to paginator constructor
@@ -25,5 +25,5 @@ func (a GORMAdapter) Nums() (int64, error) {
 // Slice stores into data argument a slice of the results.
 // data must be a pointer to a slice of models.
 func (a GORMAdapter) Slice(offset, length int, data interface{}) error {
-	return a.db.Limit(length).Offset(offset).Find(data).Error
+	return a.db.Limit(length).Offset(offset).Scan(data).Error
 }
