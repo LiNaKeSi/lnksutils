@@ -1,6 +1,11 @@
-package lnksutils
+package liftp
 
 import (
+	"errors"
+	"runtime"
+
+	"github.com/gen2brain/dlgs"
+
 	"fmt"
 	"os"
 	"os/exec"
@@ -19,22 +24,30 @@ func IsRootPower() bool {
 // LiftPrivilege sudo itself.
 //
 // Note, this function need zenity and sudo program in system.
-func LiftPrivilege() error {
+func LiftPrivilege(why string) error {
+	switch runtime.GOOS {
+	case "linux", "darwin":
+	default:
+		return errors.New("not support")
+	}
+
 	if IsRootPower() {
 		return nil
 	}
-	password, err := RunCommand("zenity",
-		"--password",
-		"--title", "权限",
-		"--text", "需要特权执行安装过程")
+
+	password, ok, err := dlgs.Password("需要特权执行相关操作", why)
 	if err != nil {
 		fmt.Println("无法通过图形界面获取密码，尝试使用sudo执行", err)
 	}
+	if !ok {
+		return errors.New("用户取消密码输入")
+	}
 
-	selfPath, err := os.Readlink("/proc/self/exe")
+	selfPath, err := os.Executable()
 	if err != nil {
 		return err
 	}
+
 	var cmd *exec.Cmd
 	if password != "" {
 		// TODO 避免 PS 看到密码
