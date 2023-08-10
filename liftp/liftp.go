@@ -1,7 +1,6 @@
 package liftp
 
 import (
-	"bytes"
 	"errors"
 	"runtime"
 
@@ -11,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"strings"
 )
 
 func IsRootPower() bool {
@@ -50,12 +50,10 @@ func LiftPrivilege(why string) error {
 
 	var cmd *exec.Cmd
 	if password != "" {
-		args := []string{
-			"-E", "-S", selfPath,
-		}
-		args = append(args, os.Args[1:]...)
-		cmd = exec.Command("sudo", args...)
-		cmd.Stdin = bytes.NewReader([]byte(password + string([]byte{'\n', 0})))
+		// TODO 避免 PS 看到密码
+		cmd = exec.Command("sh", "-c",
+			fmt.Sprintf("echo %s | sudo -E -S %s %s",
+				password, selfPath, strings.Join(os.Args[1:], " ")))
 	} else {
 		cmd = exec.Command("sudo", "-E", selfPath)
 		cmd.Args = append(cmd.Args, os.Args[1:]...)
