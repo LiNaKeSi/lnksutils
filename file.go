@@ -29,8 +29,8 @@ func OpenURL(url string, args ...string) (io.ReadCloser, error) {
 	return resp.Body, nil
 }
 
-//SaveToFile save `r` to `dst`, it will automatically create base directory.
-//You can save string or bytes by
+// SaveToFile save `r` to `dst`, it will automatically create base directory.
+// You can save string or bytes by
 // bytes.NewBuffer([]byte) or bytes.NewBufferString(string)
 func SaveToFile(r io.Reader, dst string, opts ...FileOption) error {
 	opt, err := initFileOpts(opts)
@@ -38,7 +38,15 @@ func SaveToFile(r io.Reader, dst string, opts ...FileOption) error {
 		return err
 	}
 	if opt.atomic {
-		tmp := dst + ".tmp"
+		basedir := filepath.Dir(dst)
+		EnsureDir(basedir)
+		tf, err := os.CreateTemp(basedir, filepath.Base(dst)+".tmp")
+		if err != nil {
+			return err
+		}
+		tmp := tf.Name()
+		tf.Close()
+
 		err = _SaveToFile(r, tmp, opt.filemode)
 		if err != nil {
 			return err
