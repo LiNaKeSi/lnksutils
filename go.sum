@@ -270,6 +270,8 @@ github.com/pelletier/go-toml v1.9.3 h1:zeC5b1GviRUyKYd6OJPvBU/mcVDVoL1OhT17FCt5d
 github.com/pelletier/go-toml v1.9.3/go.mod h1:u1nR/EPcESfeI/szUZKdtJ0xRNbUoANCkoOuaOx1Y+c=
 github.com/pelletier/go-toml/v2 v2.0.1 h1:8e3L2cCQzLFi2CR4g7vGFuFxX7Jl1kKX8gW+iV0GUKU=
 github.com/pelletier/go-toml/v2 v2.0.1/go.mod h1:r9LEWfGN8R5k0VXJ+0BkIe7MYkRdwZOjgMj2KwnJFUo=
+github.com/philippgille/gokv v0.7.0 h1:rQSIQspete82h78Br7k7rKUZ8JYy/hWlwzm/W5qobPI=
+github.com/philippgille/gokv v0.7.0/go.mod h1:OwiTP/3bhEBhSuOmFmq1+rszglfSgjJVxd1HOgOa2N4=
 github.com/philippgille/gokv/encoding v0.6.0 h1:P1TN+Aulpd6Qd7qcLqgPwoxzOQ42UHBXOovWvFxJRI8=
 github.com/philippgille/gokv/encoding v0.6.0/go.mod h1:/yKvq2BKJlKJsH7KMDrhDlEw2Pt3V1nKyFhs4iOqz5U=
 github.com/philippgille/gokv/util v0.6.0 h1:GrTxVENzKBxs8lB3tnaA88mKOuVPT7atZPplxX+PNmo=
