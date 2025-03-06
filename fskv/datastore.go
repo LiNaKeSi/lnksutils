@@ -14,7 +14,7 @@ import (
 
 type Store struct {
 	db    *flatfs.Datastore
-	codec encoding.Codec
+	Codec encoding.Codec
 }
 
 func checkKey(k string) error {
@@ -36,7 +36,7 @@ func (s Store) Set(k string, v interface{}) error {
 		return err
 	}
 
-	data, err := s.codec.Marshal(v)
+	data, err := s.Codec.Marshal(v)
 	if err != nil {
 		return err
 	}
@@ -61,7 +61,7 @@ func (s Store) Get(k string, v interface{}) (found bool, err error) {
 		return false, err
 	}
 
-	return true, s.codec.Unmarshal(data, v)
+	return true, s.Codec.Unmarshal(data, v)
 }
 
 func (s Store) Delete(k string) error {
@@ -86,6 +86,6 @@ func New(storeDir string) (Store, error) {
 		return result, err
 	}
 	result.db = db
-	result.codec = encoding.JSON
+	result.Codec = encoding.JSON
 	return result, nil
 }

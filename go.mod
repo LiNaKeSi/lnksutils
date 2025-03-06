@@ -12,7 +12,6 @@ require (
 	github.com/ipfs/go-log/v2 v2.5.1
 	github.com/jbenet/goprocess v0.1.4
 	github.com/jinzhu/gorm v1.9.16
-	github.com/philippgille/gokv v0.7.0 // indirect
 	github.com/philippgille/gokv/encoding v0.6.0
 	github.com/philippgille/gokv/util v0.6.0
 	github.com/stretchr/testify v1.8.0

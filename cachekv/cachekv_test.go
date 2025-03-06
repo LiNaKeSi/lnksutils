@@ -2,6 +2,7 @@ package cachekv
 
 import (
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/linakesi/lnksutils/fskv"
@@ -36,4 +37,30 @@ func TestCacheKv(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, found)
 	require.Equal(t, "v2", value)
+}
+
+// go test -race
+func TestCacheKvDataRace(t *testing.T) {
+	tmpPath, err := os.MkdirTemp("", "cachekv.*")
+	require.Nil(t, err)
+
+	backend, err := fskv.New(tmpPath)
+	require.Nil(t, err)
+	defer os.RemoveAll(tmpPath)
+
+	cacheKv := New(backend)
+
+	cacheKv.Set("k1", []byte("a1"))
+
+	wg := sync.WaitGroup{}
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			var s []byte
+			cacheKv.Get("k1", &s)
+			s[0] = 'b'
+		}()
+	}
+	wg.Wait()
 }
