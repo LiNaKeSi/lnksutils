@@ -37,6 +37,14 @@ func TestCacheKv(t *testing.T) {
 	require.Nil(t, err)
 	require.True(t, found)
 	require.Equal(t, "v2", value)
+
+	// delete then get
+	err = cacheKv.Delete("k1")
+	require.Nil(t, err)
+
+	found, err = cacheKv.Get("k1", &value)
+	require.Nil(t, err)
+	require.False(t, found)
 }
 
 // go test -race

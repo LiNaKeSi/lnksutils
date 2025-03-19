@@ -40,6 +40,7 @@ func (c *cacheKv) Get(k string, v interface{}) (found bool, err error) {
 }
 
 func (c *cacheKv) Delete(k string) error {
+	c.cache.Delete(k)
 	return c.backend.Delete(k)
 }
 
