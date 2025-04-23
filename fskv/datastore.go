@@ -8,6 +8,7 @@ import (
 	flatfs "github.com/linakesi/lnksutils/fskv/go-ds-flatfs"
 
 	"github.com/ipfs/go-datastore"
+	"github.com/ipfs/go-datastore/query"
 	"github.com/philippgille/gokv/encoding"
 	"github.com/philippgille/gokv/util"
 )
@@ -74,6 +75,21 @@ func (s Store) Delete(k string) error {
 
 func (s Store) Close() error {
 	return s.db.Close()
+}
+
+func (s Store) ListKeys() (keys []string, err error) {
+	res, err := s.db.Query(context.Background(), query.Query{})
+	if err != nil {
+		return nil, err
+	}
+	queryEntries, err := res.Rest()
+	if err != nil {
+		return nil, err
+	}
+	for _, e := range queryEntries {
+		keys = append(keys, strings.TrimLeft(e.Key, "/"))
+	}
+	return keys, nil
 }
 
 // 使用文件系统存储key-value数据
