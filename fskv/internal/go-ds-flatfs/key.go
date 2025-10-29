@@ -1,7 +1,7 @@
 package flatfs
 
 import (
-	"github.com/ipfs/go-datastore"
+	datastore "github.com/linakesi/lnksutils/fskv/internal/go-datastore"
 )
 
 // keyIsValid returns true if the key is valid for flatfs.

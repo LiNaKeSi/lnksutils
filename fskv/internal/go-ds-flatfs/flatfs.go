@@ -19,9 +19,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ipfs/go-datastore"
-	"github.com/ipfs/go-datastore/query"
 	"github.com/jbenet/goprocess"
+	datastore "github.com/linakesi/lnksutils/fskv/internal/go-datastore"
+	query "github.com/linakesi/lnksutils/fskv/internal/go-datastore/query"
 
 	logging "github.com/ipfs/go-log"
 )

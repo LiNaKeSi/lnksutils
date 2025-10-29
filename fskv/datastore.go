@@ -5,10 +5,10 @@ import (
 	"errors"
 	"strings"
 
-	flatfs "github.com/linakesi/lnksutils/fskv/go-ds-flatfs"
+	datastore "github.com/linakesi/lnksutils/fskv/internal/go-datastore"
+	query "github.com/linakesi/lnksutils/fskv/internal/go-datastore/query"
+	flatfs "github.com/linakesi/lnksutils/fskv/internal/go-ds-flatfs"
 
-	"github.com/ipfs/go-datastore"
-	"github.com/ipfs/go-datastore/query"
 	"github.com/philippgille/gokv/encoding"
 	"github.com/philippgille/gokv/util"
 )
